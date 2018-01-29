@@ -31,7 +31,7 @@
   <packaging>pom</packaging>
   <groupId>org.silverpeas</groupId>
   <artifactId>silverpeas-distribution</artifactId>
-  <version>6.0-SNAPSHOT</version>
+  <version>6.0</version>
   <name>Distribution of Silverpeas ${project.version}</name>
   <description>
     It generates a distribution of Silverpeas ${project.version} for both Unix-like and Windows
