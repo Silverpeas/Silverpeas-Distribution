@@ -198,6 +198,7 @@ assemble {
         copy {
           from(zipTree(a)) {
             rename 'web.xml', "web-${a.name}.xml"
+            exclude 'WEB-INF/classes/META-INF/MANIFEST.MF'
           }
           into project.ext.distDir.path
         }
