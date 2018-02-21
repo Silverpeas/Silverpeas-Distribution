@@ -202,7 +202,7 @@ assemble {
           }
           into project.ext.distDir.path
         }
-      } else if (a.name.matches(/^.*-configuration-[\d.]+(-SNAPSHOT|-alpha\d|-beta\d|-rc\d)?.jar$/)) {
+      } else if (a.name.matches(/^.*-configuration-[\d.]+(-\w+\d+)?.jar$/)) {
         log.info "Explode ${a.name} into ${project.silversetup.silverpeasHome}"
         copy {
           from(zipTree(a))
