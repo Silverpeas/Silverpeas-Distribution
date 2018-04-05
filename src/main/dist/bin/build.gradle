@@ -202,7 +202,9 @@ assemble {
           }
           into project.ext.distDir.path
         }
-      } else if (a.name.matches(/^.*-configuration-[\d.]+(-\w+\d+)?.jar$/)) {
+      } else if (a.name.matches(/^.*-configuration-[\d.]+(-\w+\d+)?.jar$/) ||
+          (a.name.matches(/^.*-configuration-.*.jar$/) && silversetup.developmentMode)) {
+        // SNAPSHOT or any kind of configuration jars are taken in charge only in development mode
         log.info "Explode ${a.name} into ${project.silversetup.silverpeasHome}"
         copy {
           from(zipTree(a))
