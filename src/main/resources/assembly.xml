@@ -43,6 +43,7 @@
     <fileSet>
       <outputDirectory>.</outputDirectory>
       <directory>src/main/dist</directory>
+      <filtered>true</filtered>
       <includes>
         <include>BUILD</include>
       </includes>
