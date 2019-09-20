@@ -7,10 +7,11 @@ import java.nio.file.Path
  * @author mmoquillon
  */
 
-log.info 'Replace old FileServer links in existing WYSIWYG contents'
-
 Path workspacePath = "${settings.SILVERPEAS_DATA_HOME}/workspaces".asPath()
-if (Files.exists(workspacePath) && Files.isDirectory(workspacePath)) {
+final String myContext = 'Old FileServer Links'
+if (Files.exists(workspacePath) && Files.isDirectory(workspacePath) &&
+    settings.context[myContext] != 'done') {
+  log.info 'Replace old FileServer links in existing WYSIWYG contents'
   workspacePath.toFile().eachDirRecurse { dir ->
     dir.eachFileMatch(~/.*wysiwyg.*.txt/) { wysiwyg ->
       String content = wysiwyg.text
@@ -22,4 +23,5 @@ if (Files.exists(workspacePath) && Files.isDirectory(workspacePath)) {
       }
     }
   }
+  settings.context[myContext] = 'done'
 }
