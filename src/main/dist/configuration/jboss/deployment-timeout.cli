@@ -1,0 +1,13 @@
+#
+# Change the timeout of the application deployment in Wildfly
+#
+
+echo Change the timeout of the application deployment in Wildfly
+
+# If already set, remove it so that the timeout can be updated
+if (outcome == success) of /system-property=jboss.as.management.blocking.timeout:read-resource
+  /system-property=jboss.as.management.blocking.timeout:remove
+end-if
+
+/system-property=jboss.as.management.blocking.timeout:add(value=${SERVER_STARTING_TIMEOUT})
+/subsystem=deployment-scanner/scanner=default:write-attribute(name=deployment-timeout,value=${SERVER_STARTING_TIMEOUT})

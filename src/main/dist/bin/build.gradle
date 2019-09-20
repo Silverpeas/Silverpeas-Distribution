@@ -67,7 +67,7 @@ silversetup {
 
     bundles {
       // used to construct the Silverpeas application from a descriptor of software components that
-      // made up Silverpeas
+      // made up Silverpeas. See silverpeas.gradle for software configuration.
       silverpeas = project.configurations.silverpeas
       tiers = project.configurations.library
     }
@@ -148,8 +148,9 @@ task start {
   description 'Starts Silverpeas'
   group 'Silverpeas'
   doLast {
+    long timeout = (project.silversetup.settings.SERVER_STARTING_TIMEOUT as Long) * 1000
     new JBossServer(project.silversetup.jbossHome.path)
-        .withStartingTimeout(project.silversetup.timeout.get())
+        .withStartingTimeout(timeout)
         .redirectOutputTo(project.ext.jbossOutputLog)
         .start()
   }
@@ -163,8 +164,9 @@ task debug {
   group 'Silverpeas'
   doLast {
     int port = (project.ext.has('port') ? project.ext.port as int:5005)
+    long timeout = (project.silversetup.settings.SERVER_STARTING_TIMEOUT as Long) * 1000
     new JBossServer(project.silversetup.jbossHome.path)
-        .withStartingTimeout(project.silversetup.timeout.get())
+        .withStartingTimeout(timeout)
         .redirectOutputTo(project.ext.jbossOutputLog)
         .debug(port)
   }
@@ -209,10 +211,11 @@ task status {
 task reload {
   description 'Reassembles the Silverpeas war application and deploys it again while JBoss/Wildfly is running (only in dev mode)'
   group 'Silverpeas Development'
-  onlyIf { silversetup.installation.developmentMode }
+  onlyIf { silversetup.installation.developmentMode.get() }
   FileLogger log = FileLogger.getLogger('reload')
+  long timeout = (project.silversetup.settings.SERVER_STARTING_TIMEOUT as Long) * 1000
   JBossServer jboss = new JBossServer(project.silversetup.jbossHome.path)
-      .withStartingTimeout(project.silversetup.timeout.get())
+      .withStartingTimeout(timeout)
       .redirectOutputTo(project.ext.jbossOutputLog)
       .useLogger(log)
   doFirst {
@@ -229,7 +232,7 @@ task reload {
     SilverpeasBuilder builder = new SilverpeasBuilder(project, log)
     builder.silverpeasHome = project.silversetup.silverpeasHome
     builder.settings = project.silversetup.settings
-    builder.developmentMode = project.silversetup.installation.developmentMode
+    builder.developmentMode = project.silversetup.installation.developmentMode.get()
 
     File silverpeasWar = builder.findSilverpeasCoreWarBundle(artifacts)
     builder.extractWarBundle(silverpeasWar, project.silversetup.installation.distDir.get())
