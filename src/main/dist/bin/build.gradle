@@ -54,17 +54,24 @@ buildscript {
  * and to install Silverpeas
  */
 silversetup {
-  // mode for developers only (be caution: don't use this mode in production environment).
-  developmentMode = (System.getenv('SILVERPEAS_DEV_MODE') != null ? System.getenv('SILVERPEAS_DEV_MODE').toBoolean() : false)
-  if (developmentMode.get() && System.getenv('SILVERPEAS_DIST_DIR') != null) {
-    distDir = file(System.getenv('SILVERPEAS_DIST_DIR'))
-  }
   logging {
     logDir = file("${project.silversetup.silverpeasHome.path}/log")
     defaultLevel = project.logLevel
   }
-  silverpeasBundles = project.configurations.silverpeas
-  tiersBundles = project.configurations.library
+  installation {
+    // mode for developers only (be caution: don't use this mode in production environment).
+    developmentMode = (System.getenv('SILVERPEAS_DEV_MODE') != null ? System.getenv('SILVERPEAS_DEV_MODE').toBoolean() : false)
+    if (developmentMode.get() && System.getenv('SILVERPEAS_DIST_DIR') != null) {
+      distDir = file(System.getenv('SILVERPEAS_DIST_DIR'))
+    }
+
+    bundles {
+      // used to construct the Silverpeas application from a descriptor of software components that
+      // made up Silverpeas. See silverpeas.gradle for software configuration.
+      silverpeas = project.configurations.silverpeas
+      tiers = project.configurations.library
+    }
+  }
 }
 
 /**
@@ -80,6 +87,7 @@ project.ext {
 clean {
   doFirst {
     JBossServer jboss = new JBossServer(project.silversetup.jbossHome.path)
+        .withStartingTimeout(project.silversetup.timeout.get())
         .redirectOutputTo(project.ext.jbossOutputLog)
     if (jboss.isStartingOrRunning()) {
       print 'WARNING: JBoss is running, stop it...'
@@ -88,8 +96,8 @@ clean {
     }
   }
   doLast {
-    ant.delete(dir: project.silversetup.distDir.get().path, includeemptydirs: true)
-    ant.delete(dir: project.silversetup.deploymentDir.path, includes: '*')
+    ant.delete(dir: project.silversetup.installation.distDir.get().path, includeemptydirs: true)
+    ant.delete(dir: project.silversetup.installation.deploymentDir.get().path, includes: '*')
     ant.delete(dir: "${project.silversetup.silverpeasHome.path}/log", includes: 'build*.log jboss_output.log')
     ant.delete(dir: "${project.silversetup.silverpeasHome.path}/silvertrace", includeemptydirs: true)
     ant.delete(dir: "${project.silversetup.silverpeasHome.path}/migrations", includeemptydirs: true)
@@ -109,12 +117,13 @@ clean {
 task redeploy {
   description 'Redeploy all the artifacts in the SILVERPEAS_HOME/deployments folder'
   group 'Silverpeas'
-  onlyIf { project.silversetup.deploymentDir.exists() }
+  onlyIf { project.silversetup.installation.deploymentDir.get().exists() }
   JBossServer jboss = new JBossServer(project.silversetup.jbossHome.path)
+      .withStartingTimeout(project.silversetup.timeout.get())
       .redirectOutputTo(project.ext.jbossOutputLog)
   doFirst {
     jboss.doWhenRunning {
-      project.silversetup.deploymentDir.listFiles().sort { a, b -> b.name <=> a.name }.each { artifact ->
+      project.silversetup.installation.deploymentDir.get().listFiles().sort { a, b -> b.name <=> a.name }.each { artifact ->
         println "Undeploy ${artifact.name}..."
         jboss.undeploy(artifact.name)
       }
@@ -122,7 +131,7 @@ task redeploy {
   }
   doLast {
     try {
-      project.silversetup.deploymentDir.listFiles().sort().each { artifact ->
+      project.silversetup.installation.deploymentDir.get().listFiles().sort().each { artifact ->
         println "Deploy ${artifact.name}..."
         jboss.deploy(artifact.path)
       }
@@ -139,7 +148,9 @@ task start {
   description 'Starts Silverpeas'
   group 'Silverpeas'
   doLast {
+    long timeout = (project.silversetup.settings.SERVER_STARTING_TIMEOUT as Long) * 1000
     new JBossServer(project.silversetup.jbossHome.path)
+        .withStartingTimeout(timeout)
         .redirectOutputTo(project.ext.jbossOutputLog)
         .start()
   }
@@ -153,7 +164,9 @@ task debug {
   group 'Silverpeas'
   doLast {
     int port = (project.ext.has('port') ? project.ext.port as int:5005)
+    long timeout = (project.silversetup.settings.SERVER_STARTING_TIMEOUT as Long) * 1000
     new JBossServer(project.silversetup.jbossHome.path)
+        .withStartingTimeout(timeout)
         .redirectOutputTo(project.ext.jbossOutputLog)
         .debug(port)
   }
@@ -167,6 +180,7 @@ task stop {
   group 'Silverpeas'
   doLast {
     new JBossServer(project.silversetup.jbossHome.path)
+        .withStartingTimeout(project.silversetup.timeout.get())
         .redirectOutputTo(project.ext.jbossOutputLog)
         .stop()
   }
@@ -180,6 +194,7 @@ task status {
   group 'Silverpeas'
   doLast {
     def jboss = new JBossServer(project.silversetup.jbossHome.path)
+        .withStartingTimeout(project.silversetup.timeout.get())
     String configurationStatus = (jboss.isAlreadyConfigured() ? 'Configured: [OK]' : 'Configured: [NOK]')
     String executionStatus = (jboss.isRunning() ? 'Running:    [OK]' : 'Running:    [NOK]')
     String deploymentStatus = (jboss.isRunning() && jboss.isDeployed('silverpeas.war') ? 'Active:     [OK]' : 'Active:     [NOK]')
@@ -196,9 +211,11 @@ task status {
 task reload {
   description 'Reassembles the Silverpeas war application and deploys it again while JBoss/Wildfly is running (only in dev mode)'
   group 'Silverpeas Development'
-  onlyIf { silversetup.developmentMode }
+  onlyIf { silversetup.installation.developmentMode.get() }
   FileLogger log = FileLogger.getLogger('reload')
+  long timeout = (project.silversetup.settings.SERVER_STARTING_TIMEOUT as Long) * 1000
   JBossServer jboss = new JBossServer(project.silversetup.jbossHome.path)
+      .withStartingTimeout(timeout)
       .redirectOutputTo(project.ext.jbossOutputLog)
       .useLogger(log)
   doFirst {
@@ -206,7 +223,7 @@ task reload {
     jboss.undeploy(SILVERPEAS_WAR)
     // deletes the Silverpeas distribution directory
     ant.delete(includeemptydirs: true) {
-      fileset(dir: project.silversetup.distDir.get().path, includes: '**/*')
+      fileset(dir: project.silversetup.installation.distDir.get().path, includes: '**/*')
     }
   }
   doLast {
@@ -214,17 +231,17 @@ task reload {
     def artifacts = configurations.silverpeas.files
     SilverpeasBuilder builder = new SilverpeasBuilder(project, log)
     builder.silverpeasHome = project.silversetup.silverpeasHome
-    builder.settings = project.silversetup.config.settings
-    builder.developmentMode = project.silversetup.developmentMode
+    builder.settings = project.silversetup.settings
+    builder.developmentMode = project.silversetup.installation.developmentMode.get()
 
     File silverpeasWar = builder.findSilverpeasCoreWarBundle(artifacts)
-    builder.extractWarBundle(silverpeasWar, project.silversetup.distDir.get())
+    builder.extractWarBundle(silverpeasWar, project.silversetup.installation.distDir.get())
     artifacts.each {
       if (it.name.endsWith('.war') && it.name != silverpeasWar.name) {
-        builder.extractWarBundle(it, project.silversetup.distDir.get())
+        builder.extractWarBundle(it, project.silversetup.installation.distDir.get())
       }
     }
-    builder.generateSilverpeasApplication(project.silversetup.distDir.get())
+    builder.generateSilverpeasApplication(project.silversetup.installation.distDir.get())
 
     try {
       log.info "Deploy ${SILVERPEAS_WAR}..."
