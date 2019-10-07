@@ -25,9 +25,11 @@ batch
 
 # For groups synchronization with remote directory
 /subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=GROUP_SYNC_LOG_FILE:add(level="INFO",suffix=".yyyy.MM.dd.hh.mm.ss", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-group_sync.log"}, append=true, max-backup-index=20, rotate-size=5M, autoflush=true)
+/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=GROUP_SYNC_LOG_FILE:write-attribute(name="formatter", value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %s%e%n")
 
 # For full domain synchronization with remote directory
 /subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=DOMAIN_SYNC_LOG_FILE:add(level="INFO",suffix=".yyyy.MM.dd.hh.mm.ss", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-domain_sync.log"}, append=true, max-backup-index=20, rotate-size=5M, autoflush=true)
+/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=DOMAIN_SYNC_LOG_FILE:write-attribute(name="formatter", value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %s%e%n")
 
 # Configure the logging asynchronous handlers (by default they aren't used; they are defined in the case some users want asynchronous logging)
 /subsystem=logging/logging-profile=silverpeas/async-handler=ASYNC_TRACE_LOG_HANDLER:add(level="ALL",queue-length=1048576,overflow-action=BLOCK,subhandlers=["TRACE_LOG_FILE"])
