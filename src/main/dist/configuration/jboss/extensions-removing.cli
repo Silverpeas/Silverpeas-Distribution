@@ -1,0 +1,86 @@
+#
+# Removes the extensions from Wildfly that we aren't using
+#
+
+echo Remove some extension modules from Wildfly
+
+# JEE Batch module JBeret (JSR-352)
+if (outcome == success) of /extension=org.wildfly.extension.batch.jberet:read-resource
+  echo Remove JEE Batch module JBeret
+  /subsystem=batch-jberet:remove()
+  /extension=org.wildfly.extension.batch.jberet:remove()
+end-if
+
+# Some JEE micro-profile modules provided by Smallrye
+if (outcome == success) of /extension=org.wildfly.extension.microprofile.opentracing-smallrye:read-resource
+  echo Remove OpenTracing JEE micro-profile Smallrye
+  /subsystem=microprofile-opentracing-smallrye:remove()
+  /extension=org.wildfly.extension.microprofile.opentracing-smallrye:remove()
+end-if
+
+if (outcome == success) of /extension=org.wildfly.extension.microprofile.jwt-smallrye:read-resource
+  echo Remove JWT JEE micro-profile Smallrye
+  /subsystem=microprofile-jwt-smallrye:remove()
+  /extension=org.wildfly.extension.microprofile.jwt-smallrye:remove()
+end-if
+
+if (outcome == success) of /extension=org.wildfly.extension.microprofile.health-smallrye:read-resource
+  echo Remove Health JEE micro-profile Smallrye
+  /subsystem=microprofile-health-smallrye:remove()
+  /extension=org.wildfly.extension.microprofile.health-smallrye:remove()
+end-if
+
+if (outcome == success) of /extension=org.wildfly.extension.microprofile.metrics-smallrye:read-resource
+  echo Remove Metrics JEE micro-profile Smallrye
+  /subsystem=microprofile-metrics-smallrye:remove()
+  /extension=org.wildfly.extension.microprofile.metrics-smallrye:remove()
+end-if
+
+if (outcome == success) of /extension=org.wildfly.extension.microprofile.config-smallrye:read-resource
+  echo Remove Config JEE micro-profile Smallrye
+  /subsystem=microprofile-config-smallrye:remove()
+  /extension=org.wildfly.extension.microprofile.config-smallrye:remove()
+end-if
+
+# IIOP extension for both CORBA/JEE remoting support
+if (outcome == success) of /extension=org.wildfly.iiop-openjdk:read-resource
+  echo Remove OpenJDK IIOP module
+  /subsystem=iiop-openjdk:remove()
+  /extension=org.wildfly.iiop-openjdk:remove()
+end-if
+
+# Wildfly Web clustering module
+if (outcome == success) of /extension=org.wildfly.extension.clustering.web:read-resource
+  echo Remove Wildfly Web clustering module
+  /subsystem=distributable-web:remove()
+  /extension=org.wildfly.extension.clustering.web:remove()
+end-if
+
+# Wildfly Web clustering module
+if (outcome == success) of /extension=org.wildfly.extension.clustering.web:read-resource
+  echo Remove Wildfly Web clustering module
+  /subsystem=distributable-web:remove()
+  /extension=org.wildfly.extension.clustering.web:remove()
+end-if
+
+# Wildfly security manager module
+if (outcome == success) of /extension=org.wildfly.extension.security.manager:read-resource
+  echo Remove Wildfly Security Manager module
+  /subsystem=security-manager:remove()
+  /extension=org.wildfly.extension.security.manager:remove()
+end-if
+
+# Wildfly EE security module
+if (outcome == success) of /extension=org.wildfly.extension.ee-security:read-resource
+  echo Remove Wildfly EE security module
+  /subsystem=ee-security:remove()
+  /extension=org.wildfly.extension.ee-security:remove()
+end-if
+
+# Wildfly security framework Elytron
+if (outcome == success) of /extension=org.wildfly.extension.elytron:read-resource
+  echo Remove Wildfly security framework Elytron
+  /subsystem=elytron:remove()
+  /extension=org.wildfly.extension.elytron:remove()
+end-if
+
