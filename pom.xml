@@ -41,7 +41,7 @@
   <scm>
     <developerConnection>scm:git:git@github.com:Silverpeas/Silverpeas-Distribution.git</developerConnection>
     <connection>scm:git:git@github.com:Silverpeas/Silverpeas-Distribution.git</connection>
-    <url>http://github.com/Silverpeas/Silverpeas-Distribution.git</url>
+    <url>https://github.com/Silverpeas/Silverpeas-Distribution.git</url>
     <tag>HEAD</tag>
   </scm>
 
@@ -50,7 +50,7 @@
       <id>Silverpeas</id>
       <layout>default</layout>
       <name>Silverpeas Repository</name>
-      <url>http://www.silverpeas.org/nexus/content/groups/silverpeas</url>
+      <url>https://www.silverpeas.org/nexus/content/groups/silverpeas</url>
       <releases>
         <enabled>true</enabled>
       </releases>
@@ -65,13 +65,13 @@
       <id>silverpeas</id>
       <name>Repository Silverpeas</name>
       <layout>default</layout>
-      <url>http://www.silverpeas.org/nexus/content/repositories/releases/</url>
+      <url>https://www.silverpeas.org/nexus/content/repositories/releases/</url>
     </repository>
     <snapshotRepository>
       <id>silverpeas-snapshots</id>
       <name>Snapshots Repository Silverpeas</name>
       <layout>default</layout>
-      <url>http://www.silverpeas.org/nexus/content/repositories/snapshots/</url>
+      <url>https://www.silverpeas.org/nexus/content/repositories/snapshots/</url>
     </snapshotRepository>
     <site>
       <id>silverpeas_repository</id>
