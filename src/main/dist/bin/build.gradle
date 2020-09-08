@@ -19,7 +19,7 @@ repositories {
   mavenLocal()
   maven {
     name 'silverpeas'
-    url 'http://www.silverpeas.org/nexus/content/groups/silverpeas'
+    url 'https://www.silverpeas.org/nexus/content/groups/silverpeas'
   }
   flatDir {
     dirs 'lib'
@@ -38,7 +38,7 @@ buildscript {
   repositories {
     mavenLocal()
     maven {
-      url 'http://www.silverpeas.org/nexus/content/groups/silverpeas'
+      url 'https://www.silverpeas.org/nexus/content/groups/silverpeas'
     }
     maven {
       url 'https://plugins.gradle.org/m2/'
