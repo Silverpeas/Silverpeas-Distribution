@@ -16,19 +16,19 @@ batch
 
 # Add the size rotating file handlers
 # For global traces
-/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=TRACE_LOG_FILE:add(level="ALL",suffix=".yyyy.MM.dd.hh.mm.ss", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-trace.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
+/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=TRACE_LOG_FILE:add(level="ALL", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-trace.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
 /subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=TRACE_LOG_FILE:write-attribute(name="formatter", value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n")
 
 # For errors
-/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=ERROR_LOG_FILE:add(level="ERROR",suffix=".yyyy.MM.dd.hh.mm.ss", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-error.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
+/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=ERROR_LOG_FILE:add(level="ERROR", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-error.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
 /subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=ERROR_LOG_FILE:write-attribute(name="formatter", value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n")
 
 # For groups synchronization with remote directory
-/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=GROUP_SYNC_LOG_FILE:add(level="INFO",suffix=".yyyy.MM.dd.hh.mm.ss", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-group_sync.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
+/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=GROUP_SYNC_LOG_FILE:add(level="INFO", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-group_sync.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
 /subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=GROUP_SYNC_LOG_FILE:write-attribute(name="formatter", value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %s%e%n")
 
 # For full domain synchronization with remote directory
-/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=DOMAIN_SYNC_LOG_FILE:add(level="INFO",suffix=".yyyy.MM.dd.hh.mm.ss", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-domain_sync.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
+/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=DOMAIN_SYNC_LOG_FILE:add(level="INFO", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-domain_sync.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
 /subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=DOMAIN_SYNC_LOG_FILE:write-attribute(name="formatter", value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %s%e%n")
 
 # Configure the logging asynchronous handlers (by default they aren't used; they are defined in the case some users want asynchronous logging)
