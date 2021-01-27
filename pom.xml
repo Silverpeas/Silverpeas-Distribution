@@ -31,7 +31,7 @@
   <packaging>jar</packaging>
   <groupId>org.silverpeas</groupId>
   <artifactId>silverpeas-distribution</artifactId>
-  <version>6.2-SNAPSHOT</version>
+  <version>6.2</version>
   <name>Distribution of Silverpeas ${project.version}</name>
   <description>
     It generates a distribution of Silverpeas ${project.version} for both Unix-like and Windows
@@ -42,7 +42,7 @@
     <developerConnection>scm:git:git@github.com:Silverpeas/Silverpeas-Distribution.git</developerConnection>
     <connection>scm:git:git@github.com:Silverpeas/Silverpeas-Distribution.git</connection>
     <url>https://github.com/Silverpeas/Silverpeas-Distribution.git</url>
-    <tag>HEAD</tag>
+    <tag>6.2</tag>
   </scm>
 
   <repositories>
