@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <assembly>
-  <id>distribution-windows</id>
+  <id>silverpeas-distribution</id>
   <formats>
     <format>zip</format>
   </formats>
@@ -19,7 +19,7 @@
       <directory>src/main/dist/bin</directory>
       <filtered>true</filtered>
       <includes>
-        <include>build.gradle</include>
+        <include>settings.gradle</include>
         <include>silverpeas.gradle</include>
       </includes>
     </fileSet>
@@ -28,7 +28,7 @@
       <directory>src/main/dist/bin</directory>
       <excludes>
         <exclude>silverpeas</exclude>
-        <exclude>build.gradle</exclude>
+        <exclude>settings.gradle</exclude>
         <exclude>silverpeas.gradle</exclude>
       </excludes>
     </fileSet>

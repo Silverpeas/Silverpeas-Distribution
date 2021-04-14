@@ -1,1 +1,19 @@
+/**
+ * Defines where to find the binary of the installer and configurator. At first execution, it will
+ * be downloaded, cached and then executed to perform its tasks.
+ */
+pluginManagement {
+  plugins {
+    id 'silversetup' version '${project.version}'
+  }
+
+  repositories {
+    mavenLocal()
+    maven {
+      url 'https://www.silverpeas.org/nexus/content/groups/silverpeas'
+    }
+    gradlePluginPortal()
+  }
+}
+
 rootProject.name = 'silverpeas'

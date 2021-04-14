@@ -1,19 +1,31 @@
+/**
+ * Descriptor of the Silverpeas runner tool that decorates both the Silverpeas installer and
+ * configurator tool (silversetup, a standalone custom Gradle plugin).
+ * The descriptor adds to the silversetup plugin the tasks to start, to stop, and to get the
+ * execution status of Silverpeas.
+ */
+
 import org.silverpeas.setup.api.FileLogger
 import org.silverpeas.setup.api.JBossServer
 import org.silverpeas.setup.construction.SilverpeasBuilder
 import static org.silverpeas.setup.construction.SilverpeasConstructionTask.SILVERPEAS_WAR
 import static org.silverpeas.setup.SilverpeasSetupPlugin.JBOSS_OUTPUT_LOG
 
+plugins {
+  id 'base'
+  id 'silversetup'
+  id 'net.linguica.maven-settings' version '0.5'
+}
+
 description = 'Distribution of Silverpeas. Its aim is to make, to setup and to execute a Silverpeas installation'
 group = 'org.silverpeas'
 
 apply from: "${System.getenv('SILVERPEAS_HOME')}/bin/silverpeas.gradle"
-apply plugin: 'maven'
-apply plugin: 'net.linguica.maven-settings'
-apply plugin: 'silversetup'
 
 /**
- * Where to find the software components that made Silverpeas.
+ * Where to find the software components that made Silverpeas. Those components will be downloaded,
+ * then unpacked and finally combined into a single Web application archive ready to be deployed
+ * into a JEE application server (Wildfly in our case).
  */
 repositories {
   mavenLocal()
@@ -27,30 +39,7 @@ repositories {
 }
 
 /**
- * Dependencies required by the installation and configuration processes.
- */
-buildscript {
-  dependencies {
-    classpath "net.linguica.gradle:maven-settings-plugin:0.4"
-    classpath "org.silverpeas:silverpeas-setup:${project.version}"
-    classpath fileTree(dir: 'lib', include: ['*.jar'])
-  }
-  repositories {
-    mavenLocal()
-    maven {
-      url 'https://www.silverpeas.org/nexus/content/groups/silverpeas'
-    }
-    maven {
-      url 'https://plugins.gradle.org/m2/'
-    }
-    flatDir {
-      dirs 'lib'
-    }
-  }
-}
-
-/**
- * Configuration properties of the Silverpeas Setup Gradle plugin, required to make, to configure
+ * Configuration properties of the silversetup Gradle plugin, required to make, to configure
  * and to install Silverpeas
  */
 silversetup {
