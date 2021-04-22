@@ -82,7 +82,7 @@
   <properties>
     <!-- property used by the CI to both deploy a build version and release the next stable version -->
     <next.release>6.3</next.release>
-    <server.distribution>wildfly20</server.distribution>
+    <server.distribution>wildfly23</server.distribution>
   </properties>
 
   <build>
