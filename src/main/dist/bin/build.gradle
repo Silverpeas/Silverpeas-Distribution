@@ -11,6 +11,20 @@ import org.silverpeas.setup.construction.SilverpeasBuilder
 import static org.silverpeas.setup.construction.SilverpeasConstructionTask.SILVERPEAS_WAR
 import static org.silverpeas.setup.SilverpeasSetupPlugin.JBOSS_OUTPUT_LOG
 
+/**
+ * Additional dependencies required by this tool, like some database drivers.
+ */
+buildscript {
+  dependencies {
+    classpath fileTree(dir: 'lib', include: ['*.jar'])
+  }
+  repositories {
+    flatDir {
+      dirs 'lib'
+    }
+  }
+}
+
 plugins {
   id 'base'
   id 'silversetup'
