@@ -77,10 +77,4 @@ if (outcome == success) of /extension=org.wildfly.extension.ee-security:read-res
   /extension=org.wildfly.extension.ee-security:remove()
 end-if
 
-# Wildfly security framework Elytron
-if (outcome == success) of /extension=org.wildfly.extension.elytron:read-resource
-  echo Remove Wildfly security framework Elytron
-  /subsystem=elytron:remove()
-  /extension=org.wildfly.extension.elytron:remove()
-end-if
 
