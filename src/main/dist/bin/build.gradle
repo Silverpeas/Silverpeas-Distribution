@@ -152,7 +152,9 @@ task start {
   group 'Silverpeas'
   doLast {
     long timeout = (project.silversetup.settings.SERVER_STARTING_TIMEOUT as Long) * 1000
+    boolean serverManagementAllIP = (project.silversetup.settings.getOrDefault('SERVER_MANAGEMENT_ALL_IP', false).toBoolean())
     new JBossServer(project.silversetup.jbossHome.path)
+        .setServerManagementAllIP(serverManagementAllIP)
         .withStartingTimeout(timeout)
         .redirectOutputTo(project.ext.jbossOutputLog)
         .start()
@@ -168,7 +170,9 @@ task debug {
   doLast {
     int port = (project.ext.has('port') ? project.ext.port as int:5005)
     long timeout = (project.silversetup.settings.SERVER_STARTING_TIMEOUT as Long) * 1000
+    boolean serverManagementAllIP = (project.silversetup.settings.getOrDefault('SERVER_MANAGEMENT_ALL_IP', false).toBoolean())
     new JBossServer(project.silversetup.jbossHome.path)
+        .setServerManagementAllIP(serverManagementAllIP)
         .withStartingTimeout(timeout)
         .redirectOutputTo(project.ext.jbossOutputLog)
         .debug(port)

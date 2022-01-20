@@ -16,6 +16,7 @@ data-source add \
   --jndi-name=java:/datasources/DocumentStore \
   --jta=false \
   --use-java-context=true \
+  --statistics-enabled=${JCR_STATS_ENABLED} \
   --user-name=${JCR_USER} \
   --password=${JCR_PASSWORD} \
   --use-ccm=true \

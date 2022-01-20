@@ -16,6 +16,7 @@ data-source add \
   --jndi-name=${DB_DATASOURCE_JNDI} \
   --allow-multiple-users=true \
   --use-java-context=true \
+  --statistics-enabled=${DB_STATS_ENABLED} \
   --user-name=${DB_USER} \
   --password=${DB_PASSWORD} \
   --use-ccm=true \
