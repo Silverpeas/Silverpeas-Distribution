@@ -1,0 +1,8 @@
+#
+# Specify to Resteasy Client to use Jackson for JSON serialization/deserialization instead of Yasson Jsonb
+#
+
+echo Set Jackson as default JSON serializer/deserializer for Resteasy Client
+
+/subsystem=jaxrs:write-attribute(name=resteasy-prefer-jackson-over-jsonb, value=true)
+/system-property=resteasy.preferJacksonOverJsonB:add(value=true)
