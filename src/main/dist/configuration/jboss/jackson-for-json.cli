@@ -4,5 +4,10 @@
 
 echo Set Jackson as default JSON serializer/deserializer for Resteasy Client
 
-/subsystem=jaxrs:write-attribute(name=resteasy-prefer-jackson-over-jsonb, value=true)
-/system-property=resteasy.preferJacksonOverJsonB:add(value=true)
+if (result != true) of /subsystem=jaxrs:read-attribute(name=resteasy-prefer-jackson-over-jsonb)
+  /subsystem=jaxrs:write-attribute(name=resteasy-prefer-jackson-over-jsonb, value=true)
+end-if
+
+if (outcome != success) of /system-property=resteasy.preferJacksonOverJsonB:read-resource
+  /system-property=resteasy.preferJacksonOverJsonB:add(value=true)
+end-if
