@@ -31,7 +31,7 @@
   <packaging>jar</packaging>
   <groupId>org.silverpeas</groupId>
   <artifactId>silverpeas-distribution</artifactId>
-  <version>6.3</version>
+  <version>6.3.1-SNAPSHOT</version>
   <name>Distribution of Silverpeas ${project.version}</name>
   <description>
     It generates a distribution of Silverpeas ${project.version} for both Unix-like and Windows
@@ -42,7 +42,7 @@
     <developerConnection>scm:git:git@github.com:Silverpeas/Silverpeas-Distribution.git</developerConnection>
     <connection>scm:git:git@github.com:Silverpeas/Silverpeas-Distribution.git</connection>
     <url>https://github.com/Silverpeas/Silverpeas-Distribution.git</url>
-    <tag>6.3</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <repositories>
@@ -81,7 +81,7 @@
 
   <properties>
     <!-- property used by the CI to both deploy a build version and release the next stable version -->
-    <next.release>6.3</next.release>
+    <next.release>6.3.1</next.release>
     <server.distribution>wildfly26</server.distribution>
   </properties>
 
