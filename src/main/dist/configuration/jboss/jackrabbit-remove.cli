@@ -1,0 +1,16 @@
+#
+# Remove any previous Jackrabbit JCA used to provide a JCR implementation to Silverpeas.
+# The JCR is now provided by the Jackrabbit Oak through a library embedded in Silverpeas.
+#
+
+echo Remove Jackrabbit JCA and its datasource
+
+if (outcome == success) of /subsystem=resource-adapters/resource-adapter=jackrabbit-jca.rar:read-resource
+  /subsystem=resource-adapters/resource-adapter=jackrabbit-jca.rar:remove
+  /deployment=jackrabbit-jca.rar:remove
+  /subsystem=jca/archive-validation=archive-validation:write-attribute(name=enabled, value=true)
+end-if
+
+if (outcome == success) of /subsystem=datasources/data-source=DocumentStore:read-resource
+  /subsystem=datasources/data-source=DocumentStore:remove
+end-if
