@@ -23,6 +23,12 @@ Path jcrConfigurationTemplatePath = "${settings.CONFIGURATION_HOME}/silverpeas/r
 Path jackrabbitConfig = "${settings.JCR_HOME}/repository.xml".asPath()
 Path jackrabbitConfigBackup = "${settings.JCR_HOME}/repository.xml.backup".asPath()
 if (Files.exists(jackrabbitConfig)) {
+  log.info 'Backup the Jackrabbit 2 configuration files and update them for the JCR migration...'
+
+  String jcrUrl = (settings.JCR_URL ? settings.JCR_URL : settings.DB_URL).toString()
+  String jcrUser = (settings.JCR_USER ? settings.JCR_USER : settings.DB_USER).toString()
+  String jcrPassword = (settings.JCR_PASSWORD ? settings.JCR_PASSWORD : settings.DB_PASSWORD).toString()
+
   SAXParserFactory factory = SAXParserFactory.newInstance()
   factory.validating = false
   factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",
@@ -36,20 +42,20 @@ if (Files.exists(jackrabbitConfig)) {
   def node = xmlRepositoryConf.Workspace.PersistenceManager.param.find { it.@name == 'user'}
   if (!node) {
     xmlRepositoryConf.Workspace.PersistenceManager.param.find { it.@name == 'driver' }.@value = settings.DB_DRIVER
-    xmlRepositoryConf.Workspace.PersistenceManager.param.find { it.@name == 'url' }.@value = settings.JCR_URL.toString()
+    xmlRepositoryConf.Workspace.PersistenceManager.param.find { it.@name == 'url' }.@value = jcrUrl
     xmlRepositoryConf.Workspace.PersistenceManager.appendNode {
-      param(name: 'user', value: settings.JCR_USER)
+      param(name: 'user', value: jcrUser)
     }
     xmlRepositoryConf.Workspace.PersistenceManager.appendNode {
-      param(name: 'password', value: settings.JCR_PASSWORD)
+      param(name: 'password', value: jcrPassword)
     }
     xmlRepositoryConf.Versioning.PersistenceManager.param.find { it.@name == 'driver' }.@value = settings.DB_DRIVER
-    xmlRepositoryConf.Versioning.PersistenceManager.param.find { it.@name == 'url' }.@value = settings.JCR_URL.toString()
+    xmlRepositoryConf.Versioning.PersistenceManager.param.find { it.@name == 'url' }.@value = jcrUrl
     xmlRepositoryConf.Versioning.PersistenceManager.appendNode {
-      param(name: 'user', value: settings.JCR_USER)
+      param(name: 'user', value: jcrUser)
     }
     xmlRepositoryConf.Versioning.PersistenceManager.appendNode {
-      param(name: 'password', value: settings.JCR_PASSWORD)
+      param(name: 'password', value: jcrPassword)
     }
     XmlUtil.serialize(xmlRepositoryConf, new FileWriter(jackrabbitConfig.toFile()))
 
@@ -61,12 +67,12 @@ if (Files.exists(jackrabbitConfig)) {
     // update workspace.xml for an eventual migration to oak
     def xmlWorkspaceConf = new XmlSlurper(factory.newSAXParser()).parse(jcrWorkspaceConfig.toFile())
     xmlWorkspaceConf.PersistenceManager.param.find { it.@name == 'driver' }.@value = settings.DB_DRIVER
-    xmlWorkspaceConf.PersistenceManager.param.find { it.@name == 'url' }.@value = settings.JCR_URL.toString()
+    xmlWorkspaceConf.PersistenceManager.param.find { it.@name == 'url' }.@value = jcrUrl
     xmlWorkspaceConf.PersistenceManager.appendNode {
-      param(name: 'user', value: settings.JCR_USER)
+      param(name: 'user', value: jcrUser)
     }
     xmlWorkspaceConf.PersistenceManager.appendNode {
-      param(name: 'password', value: settings.JCR_PASSWORD)
+      param(name: 'password', value: jcrPassword)
     }
     XmlUtil.serialize(xmlWorkspaceConf, new FileWriter(jcrWorkspaceConfig.toFile()))
   }
