@@ -20,15 +20,21 @@ Path jcrConfigurationPath = "${settings.JCR_HOME}/silverpeas-oak.properties".asP
 Path jcrConfigurationTemplatePath = "${settings.CONFIGURATION_HOME}/silverpeas/resources/silverpeas-oak.properties".asPath()
 
 /* case of a jcr home directory whose the repository is managed by jackrabbit */
-Path jackrabbitConfig = "${settings.JCR_HOME}/repository.xml".asPath()
-Path jackrabbitConfigBackup = "${settings.JCR_HOME}/repository.xml.backup".asPath()
-if (Files.exists(jackrabbitConfig)) {
+Path jcrConfig = "${settings.JCR_HOME}/repository.xml".asPath()
+if (Files.exists(jcrConfig)) {
+  Path jackrabbitHomePath = Path.of(jcrHomePath.parent.toString(), 'jackrabbit')
+  log.info "Rename the Jackrabbit 2 home directory ${jcrHomePath.toString()} to ${jackrabbitHomePath.toString()}..."
+
+  Files.move(jcrHomePath, Path.of(jcrHomePath.parent.toString(), 'jackrabbit'))
+
   log.info 'Backup the Jackrabbit 2 configuration files and update them for the JCR migration...'
 
   String jcrUrl = (settings.JCR_URL ? settings.JCR_URL : settings.DB_URL).toString()
   String jcrUser = (settings.JCR_USER ? settings.JCR_USER : settings.DB_USER).toString()
   String jcrPassword = (settings.JCR_PASSWORD ? settings.JCR_PASSWORD : settings.DB_PASSWORD).toString()
 
+  Path jackrabbitConfig = jackrabbitHomePath.resolve('repository.xml')
+  Path jackrabbitConfigBackup = jackrabbitHomePath.resolve('repository.xml.backup')
   SAXParserFactory factory = SAXParserFactory.newInstance()
   factory.validating = false
   factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd",
@@ -60,8 +66,8 @@ if (Files.exists(jackrabbitConfig)) {
     XmlUtil.serialize(xmlRepositoryConf, new FileWriter(jackrabbitConfig.toFile()))
 
     // backup workspace.xml
-    Path jcrWorkspaceConfig = "${settings.JCR_HOME}/workspaces/silverpeas/workspace.xml".asPath()
-    Path jcrWorkspaceConfigBackup = "${settings.JCR_HOME}/workspaces/silverpeas/workspace.xml.backup".asPath()
+    Path jcrWorkspaceConfig = jackrabbitHomePath.resolve(Path.of('workspaces', 'silverpeas', 'workspace.xml'))
+    Path jcrWorkspaceConfigBackup = jackrabbitHomePath.resolve(Path.of('workspaces', 'silverpeas', 'workspace.xml.backup'))
     Files.copy(jcrWorkspaceConfig, jcrWorkspaceConfigBackup, StandardCopyOption.REPLACE_EXISTING)
 
     // update workspace.xml for an eventual migration to oak
@@ -78,7 +84,7 @@ if (Files.exists(jackrabbitConfig)) {
   }
 
   // update the registry of JCR namespaces to replace deprecated empty entry
-  Path namespacesPath = "${settings.JCR_HOME}/repository/namespaces/ns_reg.properties".asPath()
+  Path namespacesPath = jackrabbitHomePath.resolve(Path.of('repository', 'namespaces', 'ns_reg.properties'))
   Properties namespaces = new Properties()
   namespaces.load(new FileInputStream(namespacesPath.toFile()))
   String emptyEntry = namespaces.getProperty('')
@@ -87,9 +93,6 @@ if (Files.exists(jackrabbitConfig)) {
     namespaces['.empty.key']=''
     namespaces.store(new FileOutputStream(namespacesPath.toFile()), null)
   }
-
-  // now move the JCR home to a new location, id est rename the home directory to jackrabbit
-  Files.move(jcrHomePath, Path.of(jcrHomePath.parent.toString(), 'jackrabbit'))
 }
 
 /* creates the JCR home directory if it doesn't already exist and copies the JCR configuration file
