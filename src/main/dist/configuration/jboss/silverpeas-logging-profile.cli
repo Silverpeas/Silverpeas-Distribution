@@ -31,6 +31,10 @@ batch
 /subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=DOMAIN_SYNC_LOG_FILE:add(level="INFO", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-domain_sync.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
 /subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=DOMAIN_SYNC_LOG_FILE:write-attribute(name="formatter", value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %s%e%n")
 
+# For workflow all reassignment tasks
+/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=WF_REASSIGNMENT_LOG_FILE:add(level="ALL", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-workflow-reassignment.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
+/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=WF_REASSIGNMENT_LOG_FILE:write-attribute(name="formatter", value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %s%e%n")
+
 # Configure the logging asynchronous handlers (by default they aren't used; they are defined in the case some users want asynchronous logging)
 /subsystem=logging/logging-profile=silverpeas/async-handler=ASYNC_TRACE_LOG_HANDLER:add(level="ALL",queue-length=1048576,overflow-action=BLOCK,subhandlers=["TRACE_LOG_FILE"])
 /subsystem=logging/logging-profile=silverpeas/async-handler=ASYNC_ERROR_LOG_HANDLER:add(level="ERROR",queue-length=1048576,overflow-action=BLOCK,subhandlers=["ERROR_LOG_FILE"])
@@ -46,6 +50,10 @@ batch
 # Create a logger for full domain synchronization
 /subsystem=logging/logging-profile=silverpeas/logger=silverpeas.core.admin.domain.synchro.domain:add(level="${SILVERPEAS_LOGGING_LEVEL}",handlers=[DOMAIN_SYNC_LOG_FILE])
 /subsystem=logging/logging-profile=silverpeas/logger=silverpeas.core.admin.domain.synchro.domain:write-attribute(name=use-parent-handlers, value=false)
+
+# Create a logger for workflow all reassignment tasks
+/subsystem=logging/logging-profile=silverpeas/logger=silverpeas.components.processmanager.reassignment:add(level="${SILVERPEAS_LOGGING_LEVEL}",handlers=[WF_REASSIGNMENT_LOG_FILE])
+/subsystem=logging/logging-profile=silverpeas/logger=silverpeas.components.processmanager.reassignment:write-attribute(name=use-parent-handlers, value=false)
 
 # For jboss_output.log
 # Change COLOR_PATTERN to Standard Pattern for jboss-output.log
