@@ -29,6 +29,7 @@
     </configfile>
 
     <configfile name="general.properties">
+      <parameter key="httpServerBase">${URL_BASE}</parameter>
       <parameter key="securityPath">${HIDDEN_SILVERPEAS_DIR}</parameter>
     </configfile>
 
