@@ -10,7 +10,7 @@ pluginManagement {
   repositories {
     mavenLocal()
     maven {
-      url 'https://www.silverpeas.org/nexus/content/groups/silverpeas'
+      url 'https://nexus3.silverpeas.org/repository/silverpeas'
     }
     gradlePluginPortal()
   }
