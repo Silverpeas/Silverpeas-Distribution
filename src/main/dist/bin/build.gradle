@@ -99,7 +99,8 @@ clean {
     }
   }
   doLast {
-    ant.delete(dir: project.silversetup.installation.distDir.get().path, includeemptydirs: true)
+    ant.delete(dir: project.silversetup.installation.distDir.get().path, includeemptydirs: true,
+        includes: '**/*')
     ant.delete(dir: project.silversetup.installation.deploymentDir.get().path, includes: '*')
     ant.delete(dir: "${project.silversetup.silverpeasHome.path}/log", includes: 'build*.log jboss_output.log')
     ant.delete(dir: "${project.silversetup.silverpeasHome.path}/silvertrace", includeemptydirs: true)
