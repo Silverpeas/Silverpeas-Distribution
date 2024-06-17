@@ -33,7 +33,7 @@
   <packaging>jar</packaging>
   <groupId>org.silverpeas</groupId>
   <artifactId>silverpeas-distribution</artifactId>
-  <version>6.4-SNAPSHOT</version>
+  <version>6.5-SNAPSHOT</version>
   <name>Distribution of Silverpeas ${project.version}</name>
   <description>
     It generates a distribution of Silverpeas ${project.version} for both Unix-like and Windows
@@ -83,7 +83,7 @@
 
   <properties>
     <!-- property used by the CI to both deploy a build version and release the next stable version -->
-    <next.release>6.4</next.release>
+    <next.release>6.5</next.release>
     <server.distribution>wildfly26</server.distribution>
   </properties>
 
