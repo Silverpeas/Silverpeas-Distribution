@@ -72,6 +72,7 @@ silversetup {
       // used to construct the Silverpeas application from a descriptor of software components that
       // made up Silverpeas. See silverpeas.gradle for software configuration.
       silverpeas = project.configurations.silverpeas
+      custom = project.configurations.custom
       tiers = project.configurations.library
     }
   }
