@@ -8,32 +8,36 @@ if (outcome == success) of /subsystem=logging/logging-profile=silverpeas:read-re
   /subsystem=logging/logging-profile=silverpeas:remove
 end-if
 
-# Start batching commands
-batch
-
 # Add the logging profile Silverpeas
 /subsystem=logging/logging-profile=silverpeas:add
 
+if (outcome != success) of /subsystem=logging/logging-profile=silverpeas/pattern-formatter=DEFAULT:read-resource
+    /subsystem=logging/logging-profile=silverpeas/pattern-formatter=DEFAULT:add(pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n")
+end-if
+
+if (outcome != success) of /subsystem=logging/logging-profile=silverpeas/pattern-formatter=BASIC:read-resource
+    /subsystem=logging/logging-profile=silverpeas/pattern-formatter=BASIC:add(pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %s%e%n")
+end-if
+
+# Start batch commands
+
+batch
+
 # Add the size rotating file handlers
 # For global traces
-/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=TRACE_LOG_FILE:add(level="ALL", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-trace.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
-/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=TRACE_LOG_FILE:write-attribute(name="formatter", value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n")
+/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=TRACE_LOG_FILE:add(level="ALL", named-formatter=DEFAULT, file={"path"=>"${SILVERPEAS_LOG}/silverpeas-trace.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
 
 # For errors
-/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=ERROR_LOG_FILE:add(level="ERROR", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-error.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
-/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=ERROR_LOG_FILE:write-attribute(name="formatter", value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %s%e%n")
+/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=ERROR_LOG_FILE:add(level="ERROR", named-formatter=DEFAULT, file={"path"=>"${SILVERPEAS_LOG}/silverpeas-error.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
 
 # For groups synchronization with remote directory
-/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=GROUP_SYNC_LOG_FILE:add(level="INFO", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-group_sync.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
-/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=GROUP_SYNC_LOG_FILE:write-attribute(name="formatter", value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %s%e%n")
+/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=GROUP_SYNC_LOG_FILE:add(level="INFO", named-formatter=BASIC, file={"path"=>"${SILVERPEAS_LOG}/silverpeas-group_sync.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
 
 # For full domain synchronization with remote directory
-/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=DOMAIN_SYNC_LOG_FILE:add(level="INFO", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-domain_sync.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
-/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=DOMAIN_SYNC_LOG_FILE:write-attribute(name="formatter", value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %s%e%n")
+/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=DOMAIN_SYNC_LOG_FILE:add(level="INFO", named-formatter=BASIC, file={"path"=>"${SILVERPEAS_LOG}/silverpeas-domain_sync.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
 
 # For workflow all reassignment tasks
-/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=WF_REASSIGNMENT_LOG_FILE:add(level="ALL", file={"path"=>"${SILVERPEAS_LOG}/silverpeas-workflow-reassignment.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
-/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=WF_REASSIGNMENT_LOG_FILE:write-attribute(name="formatter", value="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p %s%e%n")
+/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=WF_REASSIGNMENT_LOG_FILE:add(level="ALL", named-formatter=BASIC, file={"path"=>"${SILVERPEAS_LOG}/silverpeas-workflow-reassignment.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
 
 # Configure the logging asynchronous handlers (by default they aren't used; they are defined in the case some users want asynchronous logging)
 /subsystem=logging/logging-profile=silverpeas/async-handler=ASYNC_TRACE_LOG_HANDLER:add(level="ALL",queue-length=1048576,overflow-action=BLOCK,subhandlers=["TRACE_LOG_FILE"])
