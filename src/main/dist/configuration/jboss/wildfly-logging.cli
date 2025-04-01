@@ -1,0 +1,49 @@
+#
+# Change the FILE handler used by the Wildfly ROOT logger.
+# (batch scope doesn't support conditional statement so duplication is required.)
+#
+
+echo Change the FILE handler used by the Wildfly ROOT logger
+
+if (outcome == success) of /subsystem=logging/periodic-rotating-file-handler=FILE:read-resource
+
+    batch
+
+    # unassign the FILE handler from the ROOT logger
+    /subsystem=logging/root-logger=ROOT:remove-handler(name=FILE)
+
+    # delete the FILE handler
+    /subsystem=logging/periodic-rotating-file-handler=FILE:remove
+
+    # recreate it as a size-rotating-file-handler with the parameters defined in config.properties
+    /subsystem=logging/size-rotating-file-handler=FILE:add(named-formatter=PATTERN, file={"relative-to"=>"jboss.server.log.dir", "path"=>"server.log"}, rotate-size=${SERVER_LOG_BACKUP_SIZE}, max-backup-index=${SERVER_LOG_BACKUP_MAX}, append=true, autoflush=true)
+
+    # assign the FILE handler to the ROOT logger
+    /subsystem=logging/root-logger=ROOT:add-handler(name=FILE)
+
+    # Run the batch commands
+    run-batch
+
+else
+
+    batch
+
+    # unassign the FILE handler from the ROOT logger
+    /subsystem=logging/root-logger=ROOT:remove-handler(name=FILE)
+
+    # delete the FILE handler
+    /subsystem=logging/size-rotating-file-handler=FILE:remove
+
+    # recreate it as a size-rotating-file-handler with the parameters defined in config.properties
+    /subsystem=logging/size-rotating-file-handler=FILE:add(named-formatter=PATTERN, file={"relative-to"=>"jboss.server.log.dir", "path"=>"server.log"}, rotate-size=${SERVER_LOG_BACKUP_SIZE}, max-backup-index=${SERVER_LOG_BACKUP_MAX}, append=true, autoflush=true)
+
+    # assign the FILE handler to the ROOT logger
+    /subsystem=logging/root-logger=ROOT:add-handler(name=FILE)
+
+    # Run the batch commands
+    run-batch
+
+end-if
+
+
+
