@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2000 - 2026 Silverpeas
+  ~
+  ~ WildFly module providing ical4j and its runtime dependencies to the integration-test
+  ~ deployments. It must be installed in the WildFly used to run the integration tests, under
+  ~ $JBOSS_HOME/modules/org/mnode/ical4j/main/, together with the referenced jars (copy them from
+  ~ the local Maven repository).
+  ~
+  ~ Rationale: see core-test/src/main/resources/jboss-deployment-structure.xml. ical4j must be
+  ~ loaded once per JVM (single class loader) so that its JVM-global ZoneRulesProvider registration
+  ~ happens only once, whatever the number of ICS-parsing ITs (re)deployed into the same running
+  ~ WildFly. The bundled ical4j jar is excluded from the test WARs by WarBuilder#onLibsToInclude(),
+  ~ and the WARs depend on this module through their WEB-INF/jboss-deployment-structure.xml.
+  ~
+  ~ Only ical4j and threeten-extra (its private transitive dependency, with no WildFly module) are
+  ~ embedded here. commons-lang3, commons-codec and slf4j-api are consumed from the WildFly modules
+  ~ as plain (non re-exported) dependencies: they MUST NOT be exported to the deployments, otherwise
+  ~ a class such as commons-lang3 SerializationUtils would be loaded from this module's class loader
+  ~ and its ObjectInputStream would fail to resolve the deployment's own classes
+  ~ (ClassNotFoundException). The deployments keep and use their own bundled commons-lang3/codec.
+  ~ The optional ical4j dependencies (caffeine, jparsec, groovy) are not needed for the calendar
+  ~ features exercised by the tests.
+  -->
+<module xmlns="urn:jboss:module:1.9" name="org.mnode.ical4j">
+  <resources>
+    <resource-root path="ical4j-4.3.0.jar"/>
+    <resource-root path="threeten-extra-1.8.0.jar"/>
+  </resources>
+  <dependencies>
+    <module name="java.se"/>
+    <module name="org.slf4j"/>
+    <module name="org.apache.commons.lang3"/>
+    <module name="org.apache.commons.codec"/>
+  </dependencies>
+</module>
