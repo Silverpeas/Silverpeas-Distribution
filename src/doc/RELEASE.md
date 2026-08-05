@@ -8,6 +8,18 @@ The variables used in this document:
   * GPG\_KEY: the name of the key in your GPG key database to sign the artifact
 
 ## The different release modes
+
+### <a name="jenkins"></a>The Silverpeas project release Jenkins pipeline
+
+The project [Jenkins Pipelines](https://github.com/Silverpeas/Jenkins-Pipelines) provides a set 
+of Jenkins pipeline definitions, each of them within a `Jenkinsfile`. Among them several pipelines 
+have been written to automate the release of the Silverpeas projects. They are defined in the 
+`src/releases/` directory of the project; each subfolder matches a Silverpeas project and in 
+each of them the release pipeline is defined within a `Jenkinsfile`.
+
+The only operation to do is then to read the recommendations and constrains of the pipeline 
+usage at the header of the `Jenkinsfile` and then create a dedicated job in the Jenkins server if 
+it is not already done.
   
 ### <a name="maven"></a>The Maven Release Plugin
 
@@ -62,14 +74,22 @@ $ git push --tags
 #### For the Maven projects
 
   1. Update in the pom.xml of the project the version of the dependencies on others Silverpeas projects for their new stable version if necessary
-  2. Update in the pom.xml the version of the project to VERSION\_TO\_RELEASE
-  3. Don't forget to update also as above the subprojects if any.
-  4. [Perform](#maven-step-4) the release of VERSION\_TO\_RELEASE
-  5. Update in the pom.xml of the project the version of the dependencies on others Silverpeas project for their new development version if necessary
-  6. Update in the pom.xml the version of the project to NEXT\_DEV\_VERSION.
-  7. Don't forget to update also as above the subprojects if any.
-  8. [Perform](#maven-step-8) the deployment of NEXT\_DEV\_VERSION
-  9. [Validate](#maven-step-9) both the release and the post-release
+  2. Update in the pom.xml the version of the project to VERSION\_TO\_RELEASE by using the Maven 
+     Versions plugin (this will update also the subprojects if any):
+     ```bash
+     $ mvn -U versions:set -DgenerateBackupPoms=false -DnewVersion=VERSION_TO_RELEASE
+     ```
+  3. [Perform](#maven-step-4) the release of VERSION\_TO\_RELEASE
+  4. Update in the pom.xml of the project the version of the dependencies on others Silverpeas 
+     project for their new development version if necessary
+  5. Update in the pom.xml the version of the project to NEXT\_DEV\_VERSION by using the Maven 
+     Versions plugin:
+     ```bash
+     $ mvn -U versions:set -DgenerateBackupPoms=false -DnewVersion=NEXT_DEV_VERSION
+     ```
+  6. Don't forget to update also as above the subprojects if any.
+  7. [Perform](#maven-step-8) the deployment of NEXT\_DEV\_VERSION
+  8. [Validate](#maven-step-9) both the release and the post-release
   
 <a name="maven-step-4"></a>To perform by hand the release, please execute the following command lines (step 4):
   
@@ -133,7 +153,8 @@ Some relationship rules:
 
   * `silverpeas-dependencies-bom`, `silverpeas-test-dependencies-bom` and `Silverpeas-Project` form all of them a set.
     Any change in this set implies a release of the whole set at the same version.
-  * `Silverpeas-Core`, `Silverpeas-Components`, `Silverpeas-Assembly`, `Silverpeas-Setup`, and `Silverpeas-Distribution` form all of them a set.
+  * `Silverpeas-Core`, `Silverpeas-Components`, `Silverpeas-Assembly`, 
+    `Silverpeas-Looks`, `Silverpeas-Setup`, and `Silverpeas-Distribution` form all of them a set.
     Any change in this set implies a release of the whole set at the same version.
     Generally speaking, this whole set depends on the change in `Silverpeas-Core` and in `Silverpeas-Components`.
     If a change is required in `Silverpeas-Setup` or in `Silverpeas-Distribution`, their release will be relative to the release of both `Silverpeas-Core` and of `Silverpeas-Components`.
@@ -143,72 +164,47 @@ Some definitions:
 
   * condition: what are the conditions for the project to be released. If those conditions aren't satisfied then the project shouldn't be released.
   * pre-release: what are the steps to follow before the release of the new version
-  * mode: what is the release mode to use for releasing the project
+  * constraint: what is the constraint in the release
 
 Now the ordered process:
 
-1. Silverpeas-JCR-AccessControl
-    * *condition*: modified since the last release
-    * *mode*: [with Maven Release plugin](#maven)
+1. silverpeas-dependencies-bom
+    * *condition*: either itself 
+    * *constraint*: the version of the project should be equal to the version of both 
+      `silverpeas-test-dependencies-bom` and `Silverpeas-Project`.
 
-2. Silverpeas-Jackrabbit-JCA
-    * *condition*: `Silverpeas-JCR-AccessControl` is released or a new stable version of Jackrabbit
-    * *pre-release*: update the dependency on `Silverpeas-JCR-AccessControl`
-    * *mode*: [by hand](#by_hand)
-
-3. silverpeas-dependencies-bom
-    * *condition*: either itself or `Silverpeas-Jackrabbit-JCA` has been modified since the last release 
-    * *pre-release*: update the dependency on `Silverpeas-JCR-AccessControl` if it was previously released
-    * *mode*: [with Maven Release plugin](#maven)
-
-4. silverpeas-test-dependencies-bom
+2. silverpeas-test-dependencies-bom
     * *condition*: either itself or `silverpeas-dependencies-bom`
-    * *mode*: [with Maven Release plugin](#maven)
+    * *constraint*: the version of the project should be equal to the version of both
+        `silverpeas-dependencies-bom` and `Silverpeas-Project`.
     
-5. Silverpeas-Project
+3. Silverpeas-Project
     * *condition*: `silverpeas-dependencies` and `silverpeas-test-dependencies` are released at the same version the project should be released
     * *pre-release*: update the dependencies on both `silverpeas-depencencies` and `silverpeas-test-dependencies`
-    * *mode*: [with Maven Release plugin](#maven)
+    * *constraint*: the version of the project should be equal to the version of both
+        `silverpeas-test-dependencies-bom` and `silverpeas-dependencies-bom`.
     
-6. Silverpeas-Core
+4. Silverpeas-Core
     * *pre-release*: update the dependency of the parent POM on the latest stable version of `Silverpeas-Project`
-    * *mode*: [with Maven Release plugin](#maven)
     
-7. Silverpeas-Components
+5. Silverpeas-Components
     * *pre-release*: update the dependency of the parent POM on the latest stable version of `Silverpeas-Project`
-    * *mode*: [with Maven Release plugin](#maven)
+    * *constraint*: the version of the project should be equal to the version `Silverpeas-Core`.
+6. Silverpeas-Looks
+    * *pre-release*: update the dependency of the parent POM on the latest stable version of `Silverpeas-Project`
+    * *constraint*: the version of the project should be equal to the version of both 
+      `Silverpeas-Core` and `Silverpeas-Components`.
     
-8. Silverpeas-Assembly
+7. Silverpeas-Assembly
     * *condition*: `Silverpeas-Core` and `Silverpeas-Components` are released
     * *pre-release*: update the dependency of the parent POM on the latest stable version of `Silverpeas-Project` and update the dependency on `Silverpeas-Jackrabbit-JCA` if any
-    * *mode*: [with Maven Release plugin](#maven)
+    * *constraint*: the version of the project should be equal to the version of both
+        `Silverpeas-Core`, `Silverpeas-Components`, and `Silverpeas-Looks`.
     
-9. Silverpeas-Setup
+8. Silverpeas-Setup
     * *condition*: Silverpeas-Assembly is released
-    * *mode*: [by hand](#by_hand)
     
-10. Silverpeas-Distribution
+9. Silverpeas-Distribution
     * *condition*: `Silverpeas-Setup` is released
-    * *mode*: specific, as described below
-    
-First, update the version of both its parent POM at its latest version; the parent POM of both `Silverpeas-Core`, `Silverpeas-Components`,
-and `Silverpeas-Assembly` must be the same. Update the version of the project to the one to release and then:
-
-```bash
-    $ git commit -am "Prepare release VERSION_TO_RELEASE"
-    $ ./build.sh silverpeas
-    $ git tag VERSION_TO_RELEASE
-```
-
-The version to release must be the same than the released version of `Silverpeas-Core`, `Silverpeas-Components`, and
-`Silverpeas-Assembly`.
-
-Then, update the version of the project to the next development version as it is for both `Silverpeas-Core`, `Silverpeas-Component`,
-and `Silverpeas-Assembly`. Then:
-
-```bash
-    $ git commit -am "Prepare for next development iteration"
-    $ ./build.sh silverpeas
-    $ git push
-    $ git push --tags
-```
+    * *constrain*: The version to release must be the same as the released version of `Silverpeas-Core`, `Silverpeas-Components`, and
+      `Silverpeas-Assembly`.

@@ -27,6 +27,7 @@ buildscript {
 
 plugins {
   id 'base'
+  id 'jvm-ecosystem'
   id 'silversetup'
   id 'net.linguica.maven-settings' version '0.5'
 }
