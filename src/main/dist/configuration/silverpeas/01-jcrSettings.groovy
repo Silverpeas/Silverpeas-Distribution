@@ -1,3 +1,4 @@
+import groovy.xml.XmlSlurper
 import groovy.xml.XmlUtil
 
 import javax.xml.parsers.SAXParserFactory

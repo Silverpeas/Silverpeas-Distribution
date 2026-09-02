@@ -29,7 +29,10 @@ plugins {
   id 'base'
   id 'jvm-ecosystem'
   id 'silversetup'
-  id 'net.linguica.maven-settings' version '0.5'
+  // maintained fork of the net.linguica.maven-settings plugin (unmaintained since 2016): it makes
+  // available to Gradle the repositories, the mirrors and the servers credentials defined in the
+  // Maven settings.xml file of the user
+  id 'io.github.mavenplugins.gradle.maven-settings' version '1.1.0'
 }
 
 description = 'Distribution of Silverpeas. Its aim is to make, to setup and to execute a Silverpeas installation'
@@ -45,8 +48,8 @@ apply from: "${System.getenv('SILVERPEAS_HOME')}/bin/silverpeas.gradle"
 repositories {
   mavenLocal()
   maven {
-    name 'silverpeas'
-    url 'https://nexus3.silverpeas.org/repository/silverpeas'
+    name = 'silverpeas'
+    url = 'https://nexus3.silverpeas.org/repository/silverpeas'
   }
   flatDir {
     dirs 'lib'
@@ -120,9 +123,9 @@ clean {
  * Undeploys and then deploys all the software components in the SILVERPEAS_HOME/deployments
  * directory into JBossWildfly/JBoss. Warning: the SQL driver isn't concerned by this task.
  */
-task redeploy {
-  description 'Redeploy all the artifacts in the SILVERPEAS_HOME/deployments folder'
-  group 'Silverpeas'
+tasks.register('redeploy') {
+  description = 'Redeploy all the artifacts in the SILVERPEAS_HOME/deployments folder'
+  group = 'Silverpeas'
   onlyIf { project.silversetup.installation.deploymentDir.get().exists() }
   JBossServer jboss = new JBossServer(project.silversetup.jbossHome.path)
       .withStartingTimeout(project.silversetup.timeout.get())
@@ -150,9 +153,9 @@ task redeploy {
 /**
  * Starts Silverpeas.
  */
-task start {
-  description 'Starts Silverpeas'
-  group 'Silverpeas'
+tasks.register('start') {
+  description = 'Starts Silverpeas'
+  group = 'Silverpeas'
   doLast {
     long timeout = (project.silversetup.settings.SERVER_STARTING_TIMEOUT as Long) * 1000
     boolean serverManagementAllIP = (project.silversetup.settings.getOrDefault('SERVER_MANAGEMENT_ALL_IP', false).toBoolean())
@@ -167,9 +170,9 @@ task start {
 /**
  * Starts Silverpeas in debugging mode.
  */
-task debug {
-  description 'Starts Silverpeas in debug mode. The debug port can be passed by the -Pport argument (default 5005)'
-  group 'Silverpeas'
+tasks.register('debug') {
+  description = 'Starts Silverpeas in debug mode. The debug port can be passed by the -Pport argument (default 5005)'
+  group = 'Silverpeas'
   doLast {
     int port = (project.ext.has('port') ? project.ext.port as int:5005)
     long timeout = (project.silversetup.settings.SERVER_STARTING_TIMEOUT as Long) * 1000
@@ -185,9 +188,9 @@ task debug {
 /**
  * Stops Silverpeas.
  */
-task stop {
-  description 'Stops Silverpeas'
-  group 'Silverpeas'
+tasks.register('stop') {
+  description = 'Stops Silverpeas'
+  group = 'Silverpeas'
   doLast {
     new JBossServer(project.silversetup.jbossHome.path)
         .withStartingTimeout(project.silversetup.timeout.get())
@@ -199,9 +202,9 @@ task stop {
 /**
  * Checks the status of the Silverpeas distribution.
  */
-task status {
-  description 'Checks the status of Silverpeas: is it running? is it well configured?'
-  group 'Silverpeas'
+tasks.register('status') {
+  description = 'Checks the status of Silverpeas: is it running? is it well configured?'
+  group = 'Silverpeas'
   doLast {
     def jboss = new JBossServer(project.silversetup.jbossHome.path)
         .withStartingTimeout(project.silversetup.timeout.get())
@@ -218,9 +221,9 @@ task status {
  * Regenerates Silverpeas and redeploys it into a running
  * Wildfly/JBoss. This task is for developers and not for production. Enable only in dev mode.
  */
-task reload {
-  description 'Reassembles the Silverpeas war application and deploys it again while JBoss/Wildfly is running (only in dev mode)'
-  group 'Silverpeas Development'
+tasks.register('reload') {
+  description = 'Reassembles the Silverpeas war application and deploys it again while JBoss/Wildfly is running (only in dev mode)'
+  group = 'Silverpeas Development'
   onlyIf { silversetup.installation.developmentMode.get() }
   FileLogger log = FileLogger.getLogger('reload')
   long timeout = (project.silversetup.settings.SERVER_STARTING_TIMEOUT as Long) * 1000
