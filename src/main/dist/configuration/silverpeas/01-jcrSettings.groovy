@@ -110,9 +110,10 @@ if (Files.exists(jcrConfig)) {
 
     log.info 'Backup the Jackrabbit 2 configuration files and update them for the JCR migration to Oak...'
 
-    String jcrUrl = (settings.JCR_URL ? settings.JCR_URL : settings.DB_URL).toString()
-    String jcrUser = (settings.JCR_USER ? settings.JCR_USER : settings.DB_USER).toString()
-    String jcrPassword = (settings.JCR_PASSWORD ? settings.JCR_PASSWORD : settings.DB_PASSWORD).toString()
+    // the JCR managed by Jackrabbit 2 was stored into the database of Silverpeas
+    String jcrUrl = settings.DB_URL.toString()
+    String jcrUser = settings.DB_USER.toString()
+    String jcrPassword = settings.DB_PASSWORD.toString()
 
     Path jackrabbitConfig = jackrabbitHomePath.resolve('repository.xml')
     Path jackrabbitConfigBackup = jackrabbitHomePath.resolve('repository.xml.backup')
