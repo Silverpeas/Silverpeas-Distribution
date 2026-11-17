@@ -52,6 +52,20 @@ echo location of your Java installation.
 goto fail
 
 :init
+@rem Ensure the Windows temporary directory exists before starting Gradle
+if not defined TEMP (
+    echo ERROR: TEMP environment variable is not defined.
+    goto fail
+)
+
+if not exist "%TEMP%\" (
+    mkdir "%TEMP%" 2>NUL
+    if errorlevel 1 (
+        echo ERROR: Cannot create temporary directory "%TEMP%"
+        goto fail
+    )
+)
+
 @rem Get command-line arguments, handling Windows variants
 
 if not "%OS%" == "Windows_NT" goto win9xME_args
