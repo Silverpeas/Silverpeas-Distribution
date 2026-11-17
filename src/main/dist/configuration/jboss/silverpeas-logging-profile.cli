@@ -27,6 +27,9 @@ batch
 # For global traces
 /subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=TRACE_LOG_FILE:add(level="ALL", named-formatter=DEFAULT, file={"path"=>"${SILVERPEAS_LOG}/silverpeas-trace.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
 
+# Successful configuration-console changes, independent of the general logging level
+/subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=CONFIGURATION_AUDIT_LOG_FILE:add(level="INFO", named-formatter=BASIC, file={"path"=>"${SILVERPEAS_LOG}/silverpeas-configuration.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
+
 # For errors
 /subsystem=logging/logging-profile=silverpeas/size-rotating-file-handler=ERROR_LOG_FILE:add(level="ERROR", named-formatter=DEFAULT, file={"path"=>"${SILVERPEAS_LOG}/silverpeas-error.log"}, append=true, max-backup-index=${SILVERPEAS_LOG_BACKUP_MAX}, rotate-size=${SILVERPEAS_LOG_BACKUP_SIZE}, autoflush=true)
 
@@ -46,6 +49,10 @@ batch
 # Create a logger for Silverpeas: it will take all the texts coming from the Silverpeas root category.
 /subsystem=logging/logging-profile=silverpeas/logger=silverpeas:add(level=${SILVERPEAS_LOGGING_LEVEL},handlers=[ASYNC_TRACE_LOG_HANDLER,ASYNC_ERROR_LOG_HANDLER])
 /subsystem=logging/logging-profile=silverpeas/logger=silverpeas:write-attribute(name=use-parent-handlers, value=false)
+
+# Keep configuration audit entries in their dedicated synchronous rotating file
+/subsystem=logging/logging-profile=silverpeas/logger=silverpeas.core.admin.configuration.audit:add(level="INFO",handlers=[CONFIGURATION_AUDIT_LOG_FILE])
+/subsystem=logging/logging-profile=silverpeas/logger=silverpeas.core.admin.configuration.audit:write-attribute(name=use-parent-handlers, value=false)
 
 # Create a logger for groups synchronization in domain
 /subsystem=logging/logging-profile=silverpeas/logger=silverpeas.core.admin.domain.synchro.group:add(level="INFO",handlers=[GROUP_SYNC_LOG_FILE])
